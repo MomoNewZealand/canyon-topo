@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="渓谷トポ">
+<title>紀伊半島 渓谷トポ ICA2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;background:#f0f2f0;color:#1a1a1a}
+a{color:inherit;text-decoration:none}
+.header{background:#1a3a2a;color:#e8f5ee;padding:12px 16px 8px;position:sticky;top:0;z-index:100}
+.header-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.app-icon{width:24px;height:24px;background:#2d6e45;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.header h1{font-size:15px;font-weight:600;color:#e8f5ee}
+.header-sub{font-size:11px;color:#7abf96;margin-left:auto;text-align:right;line-height:1.4}
+.search-wrap{position:relative;margin-bottom:8px}
+.search-wrap input{width:100%;padding:8px 12px 8px 34px;border-radius:10px;border:none;background:#243d30;color:#e8f5ee;font-size:14px;outline:none;-webkit-appearance:none}
+.search-wrap input::placeholder{color:#6a9a7a}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#6a9a7a;font-size:13px}
+.filter-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;-ms-overflow-style:none;scrollbar-width:none}
+.filter-row::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:4px 11px;border-radius:20px;font-size:12px;border:1px solid #3a6a4a;color:#9fc9b0;background:transparent;cursor:pointer;-webkit-appearance:none}
+.chip.active{background:#2d6e45;color:#e8f5ee;border-color:#2d6e45}
+.list-view{padding:10px}
+.canyon-card{background:#fff;border:1px solid #e0e8e2;border-radius:14px;margin-bottom:10px;cursor:pointer;overflow:hidden}
+.canyon-card:active{background:#f5fbf7}
+.card-main{padding:12px 14px;display:flex;align-items:center;gap:12px}
+.canyon-num{width:30px;height:30px;border-radius:50%;background:#1a3a2a;color:#9fc9b0;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-info{flex:1;min-width:0}
+.card-name{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-en{font-size:11px;color:#888;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-meta{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap;align-items:center}
+.badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+.bp{background:#e4f2ea;color:#1a5a30}.bg_{background:#fef3e2;color:#7a4f00}
+.bm{background:#edf2ff;color:#1a3a6a}.bs{background:#f3ecff;color:#4a1a7a}
+.bstars{color:#c9820a;font-size:12px;letter-spacing:-1px}
+.card-arrow{color:#ccc;font-size:18px;flex-shrink:0}
+.no-results{text-align:center;padding:50px 20px;color:#888;font-size:14px}
+.detail-view{display:none;background:#f0f2f0;min-height:100vh}
+.detail-header{background:#1a3a2a;color:#e8f5ee;padding:44px 16px 16px}
+.back-btn{display:flex;align-items:center;gap:4px;color:#7abf96;font-size:14px;cursor:pointer;border:none;background:none;padding:0;margin-bottom:10px;-webkit-appearance:none}
+.dname{font-size:20px;font-weight:700;color:#e8f5ee}
+.den{font-size:12px;color:#7abf96;margin-top:3px}
+.dstars{font-size:14px;color:#f0b030;margin-top:5px}
+.dbadges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.dbadge{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.15);color:#c8e8d0}
+.section{background:#fff;border-radius:14px;margin:10px;padding:14px 16px}
+.stitle{font-size:11px;font-weight:600;letter-spacing:1px;color:#7abf96;text-transform:uppercase;margin-bottom:10px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.iitem{background:#f5fbf7;border-radius:10px;padding:10px 12px}
+.ilabel{font-size:10px;color:#888;margin-bottom:3px}
+.ival{font-size:14px;font-weight:600}
+.rain-highlight{background:#e8f5ff;border:1px solid #90c8f0;border-radius:10px;padding:10px 12px}
+.rain-label{font-size:10px;color:#1a5a8a;margin-bottom:3px}
+.rain-val{font-size:18px;font-weight:700;color:#1a5a8a}
+.irow{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f0f0f0;gap:12px}
+.irow:last-child{border-bottom:none}
+.irl{font-size:12px;color:#888;flex-shrink:0;padding-top:1px}
+.irv{font-size:13px;text-align:right;line-height:1.5}
+.alert-box{background:#fff8e6;border:1px solid #f0c060;border-radius:10px;padding:10px 12px;margin-top:10px;display:flex;gap:8px}
+.alert-text{font-size:12px;color:#7a5500;line-height:1.6}
+.map-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:#1a3a2a;color:#9fc9b0;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:8px;text-decoration:none}
+.map-btn:active{background:#243d30}
+.map-btn2{background:#f0f2f0;color:#1a3a2a;border:1px solid #ccc}
+.emr-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;gap:12px}
+.emr-item:last-child{border-bottom:none}
+.emrl{font-size:12px;color:#888;flex-shrink:0}
+.emrr{text-align:right}
+.emrname{font-size:13px;line-height:1.4}
+.emrtel{font-size:15px;font-weight:600;color:#1a5a30;display:block;margin-top:2px}
+.sigwrap{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.sigbars{display:flex;gap:3px;align-items:flex-end;height:18px}
+.sigb{width:5px;border-radius:2px;background:#ddd}
+.sigb.on{background:#2d7a45}
+.detail-bottom{height:30px}
+</style>
+</head>
+<body>
+<div id="appList">
+  <div class="header">
+    <div class="header-top">
+      <div class="app-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 11L7 3L12 11" stroke="#9fc9b0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 8L7 4.5L9.5 8" stroke="#e8f5ee" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h1>紀伊半島 渓谷トポ</h1>
+      <span class="header-sub">ICA 2026<br><span style="font-size:10px;color:#5a9a70">更新: 2026/04/02 11:39</span></span>
+    </div>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="渓谷名・エリアを検索..." oninput="renderList()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    </div>
+    <div class="filter-row">
+      <button class="chip active" onclick="setFilter('all',this)">すべて</button>
+      <button class="chip" onclick="setFilter('奈良',this)">奈良県</button>
+      <button class="chip" onclick="setFilter('三重',this)">三重県</button>
+      <button class="chip" onclick="setFilter('和歌山',this)">和歌山県</button>
+      <button class="chip" onclick="setFilter('granite',this)">花崗岩</button>
+      <button class="chip" onclick="setFilter('5',this)">★5のみ</button>
+    </div>
+  </div>
+  <div class="list-view" id="listView"></div>
+</div>
+<div id="appDetail" class="detail-view"></div>
+<script>
+const C=[{"no":1,"name":"前鬼不動七重滝","en":"zenkihudounanae-falls","pref":"","area":"","stars":"★★★★★","sc":5,"rock":"sedimentary","v":"—","d":"—","ca":"約 18.0 km2 (非常に広く、増水時の破壊力大)","time":"遡行：5〜7h（滝の登攀/懸垂による） / 下山：1.5h","map":"https://www.google.com/maps?q=34.1245,135.9348","gsi":"https://maps.gsi.go.jp/#16/34.1245/135.9348/","park":"前鬼ゲート前駐車場、または不動七重滝展望台駐車場","abs":"約100m以上（複数ピッチ） ※各段のピッチ切りが重要","rope":"60m×2本 ＋ 予備ロープ必須","rig":"マルチピッチ懸垂。高度なリギング技術が必要","anc":"既存ボルト、立ち木。支点の信頼性を要確認。","act":"巨大な甌穴へのジャンプ、スケールの大きな懸垂","esc":"滝の横にある遊歩道へ逃げられるポイントあり","geo":"堆積岩（四万十帯）。甌穴が多く、岩質は比較的安定。","wq":"極めて高い透明度（前鬼ブルー） / 比較的安定","risk":"巨大な釜での巻き込まれ、落石に厳重注意","rain":"60.1 mm","hosp":"吉野町立吉野病院 ※搬送に時間を要する","htel":"0746-32-3001","pol":"吉野警察署 上北山駐在所","ptel":"0746-82-0010","heli":"上北山中学校グラウンド（前鬼より車で約20分）","conv":"デイリーヤマザキ 下北山店（R169沿い・貴重な拠点）","toilet":"不動七重滝展望台 駐車場付近","gas":"昭和シェル 下北山SS（下北山村寺垣内）","onsen":"下北山温泉 きなりの湯","sig":"ほぼ圏外。前鬼宿坊周辺や尾根上で一部docomoのみ","sl":1},{"no":2,"name":"小又川","en":"komata-dani","pref":"","area":"","stars":"★★★★☆","sc":4,"rock":"sedimentary","v":"—","d":"—","ca":"約 7.8 km2 (前鬼川より小さく、安定しやすい)","time":"遡行：3〜4h / 下山：45分","map":"https://www.google.com/maps?q=34.1285,135.9520","gsi":"https://maps.gsi.go.jp/#16/34.1285/135.9520/","park":"小又橋付近の路肩、または前鬼ゲート周辺","abs":"約15m (30mロープ1本で対応可能)","rope":"30m×1本 ＋ 予備(緊急用)","rig":"シンプルなリギングで対応可能","anc":"樹木、岩へのアブミ、残置ハーケン","act":"穏やかなナメ歩き、小滝の登攀、釜でのスイム","esc":"右岸側の林道・仕事道へ比較的容易に脱出可能","geo":"堆積岩。前鬼川と同様に安定しているが、苔に注意。","wq":"極めて高い透明度 / 夏場でも比較的冷涼","risk":"顕著な水流トラップは少ないが、増水時はナメの流速に注意","rain":"60.1 mm","hosp":"吉野町立吉野病院 ※搬送に時間を要する","htel":"0746-32-3001","pol":"吉野警察署 上北山駐在所","ptel":"0746-82-0010","heli":"上北山中学校グラウンド（前鬼より車で約20分）","conv":"デイリーヤマザキ 下北山店（R169沿い・貴重な拠点）","toilet":"不動七重滝展望台 駐車場付近","gas":"昭和シェル 下北山SS（下北山村寺垣内）","onsen":"下北山温泉 きなりの湯","sig":"ほぼ圏外。R169まで出れば復帰","sl":1},{"no":3,"name":"白川又川","en":"kuragarimata-dani","pref":"","area":"","stars":"★★★★★","sc":5,"rock":"sedimentary","v":"—","d":"—","ca":"約5.5km2 (面積は狭いが、V字谷のため急激な増水に注意)","time":"遡行：5〜7h / 下山：1.5h","map":"https://www.google.com/maps?q=34.1610,135.9450","gsi":"https://maps.gsi.go.jp/#16/34.1610/135.9450/","park":"白川又川林道終点付近（路肩駐車、転回注意）","abs":"約30m (ゴルジュ内の滝による)","rope":"40m×2本 ＋ 予備(緊急用)","rig":"解除可能システム（Releasable）必須。強い水圧への対応が必要。","anc":"既存ボルト、残置ハーケン、流木。要バックアップ判断。","act":"泳ぎ（スイム）、激流の突破、テクニカルな懸垂","esc":"極めて困難。一度ゴルジュに入ると容易には抜けられない。","geo":"堆積岩（四万十帯）。ゴルジュ内の浮き石、落石に厳重注意。","wq":"非常に高い透明度 / ゴルジュ内は日照時間が短く水温が低い","risk":"狭いゴルジュ内の激流、サイフォン現象、脱出困難箇所あり","rain":"60.1 mm","hosp":"吉野町立吉野病院 ※搬送に時間を要する","htel":"0746-32-3001","pol":"吉野警察署 上北山駐在所","ptel":"0746-82-0010","heli":"上北山中学校グラウンド（前鬼より車で約20分）","conv":"デイリーヤマザキ 下北山店（R169沿い・貴重な拠点）","toilet":"（周辺に公共トイレなし、入渓前に済ませる）","gas":"昭和シェル 下北山SS（下北山村寺垣内）","onsen":"下北山温泉 きなりの湯","sig":"完全圏外。林道をかなり戻るまで不通。","sl":0},{"no":4,"name":"大又川","en":"oomatagawa-nishitani","pref":"","area":"","stars":"★★★★☆","sc":4,"rock":"mix","v":"—","d":"—","ca":"約 5.0 km2 (比較的小規模で安定しやすい)","time":"遡行：3〜4h / 下山：30分（遊歩道利用）","map":"https://www.google.com/maps?q=34.3855,136.0350","gsi":"https://maps.gsi.go.jp/#16/34.3855/136.0350/","park":"七滝八壷前の駐車場、または付近の路肩","abs":"約20m (七滝八壷の各段を想定)","rope":"40m×1本 ＋ 予備(緊急用)","rig":"初心者同行時は確実なバックアップが取れるシステム","anc":"樹木、岩へのアブミ、一部ボルト","act":"階段状の滝の登攀、短いスライダー、ジャンプ可","esc":"ほぼ全域で並走する林道や遊歩道へ脱出可能","geo":"堆積岩・変成岩。フリクションは良好だが苔に注意。","wq":"非常に良好 / 台風後などは濁りやすい","risk":"増水時の滝の直下は巻き込みに注意","rain":"25.6 mm","hosp":"南奈良総合医療センター※大淀町","htel":"0747-54-5000","pol":"吉野警察署 小川駐在所","ptel":"0746-42-0004","heli":"東吉野村キャンプ場付近などの開けた場所","conv":"ローソン 宇陀榛原店（榛原駅付近）※ここから40分","toilet":"七滝八壷 駐車場横の公衆トイレ","gas":"宇陀・榛原周辺の各スタンド（東吉野村内は日曜休多し）","onsen":"たかすみの里（東吉野村）","sig":"入渓点付近はdocomo微弱。谷に入ると圏外。","sl":1},{"no":5,"name":"船津川","en":"tanuki-dani","pref":"","area":"","stars":"★★★★☆","sc":4,"rock":"granite","v":"—","d":"—","ca":"約 4.5 km2 (比較的小規模だが、豪雨時は急変する)","time":"遡行：3〜4h / 下山：1h","map":"https://www.google.com/maps?q=34.1485,136.1950","gsi":"https://maps.gsi.go.jp/#16/34.1485/136.1950/","park":"船津川沿いの林道脇スペース（通行の邪魔にならないよう注意）","abs":"約20m (核心部の滝にて)","rope":"40m×1本 ＋ 予備(緊急用)","rig":"美しいナメを傷つけない支点選定、解除可能システム推奨。","anc":"樹木、岩へのアブミ。","act":"釜への飛び込み、天然スライダー、美しいナメ歩き。","esc":"比較的低高度で林道が近いため、右岸側へ脱出可能。","geo":"花崗岩。フリクションは非常に良いが、水中の滑りに注意。","wq":"極めて良好。非常にクリア。","risk":"釜が深く、水流が強い時の巻き込みに注意。","rain":"51.8 mm","hosp":"紀南病院※三重県御浜町","htel":"0597-89-3111","pol":"尾鷲警察署","ptel":"0597-22-0110","heli":"—","conv":"ファミリーマート 紀伊長島東インター店 または 紀北海山店","toilet":"近くの道の駅「海山」などを利用","gas":"紀北町内の各GS（R42沿い）","onsen":"きいながしま古里温泉 または 銚子川周辺の施設","sig":"入渓点付近はdocomo微弱。谷の中はほぼ圏外。","sl":1},{"no":6,"name":"清五郎の滝","en":"seigorou-falls","pref":"","area":"","stars":"★★★★★","sc":5,"rock":"granite","v":"—","d":"—","ca":"約 3.5 km2 (面積は小さいが、岩盤露出が多く増水が極めて早い)","time":"遡行：4〜5h / 下山：1h","map":"https://www.google.com/maps?q=34.1550,136.1850","gsi":"https://maps.gsi.go.jp/#16/34.1550/136.1850/","park":"林道脇の広めのスペース（工事車両の妨げにならないよう注意）","abs":"約30m〜40m (三段の滝をどう繋ぐかで変化)","rope":"40m×2本 ＋ 40m×1本（バックアップ）","rig":"リレサブル・システム必須。空中懸垂になる箇所あり。","anc":"強固な岩盤、樹木。一部ボルトの設置状況を確認。","act":"豪快な懸垂下降、高度感のあるスラブ登攀。","esc":"滝の横を巻く踏み跡があるが、急峻で滑りやすい。","geo":"花崗岩。非常にフリクションが良いが、乾いた砂に注意。","wq":"極めて良好（銚子川ブルー） / 夏場は適温","risk":"滝の落ち口でのスリップ、増水時の水圧によるスタックに注意。","rain":"48.3 mm","hosp":"紀南病院※三重県御浜町","htel":"0597-89-3111","pol":"尾鷲警察署","ptel":"0597-22-0110","heli":"—","conv":"ファミリーマート 紀北海山店","toilet":"近くの道の駅「海山」などを利用","gas":"紀北町内の各GS（R42沿い）","onsen":"きいながしま古里温泉","sig":"ほぼ圏外。林道を下り国道付近まで戻る必要あり。","sl":1},{"no":7,"name":"池郷川","en":"upper-ikegou-gawa","pref":"","area":"","stars":"★★★★★","sc":5,"rock":"mix","v":"—","d":"—","ca":"約 24.9 km2 (紀伊半島最大級。微増水でも脱出不能に)","time":"遡行：5〜7h / 下山：1.5h","map":"https://www.google.com/maps?q=34.1160,135.9180","gsi":"https://maps.gsi.go.jp/#16/34.1160/135.9180/","park":"池郷ダム周辺、または入渓点付近の林道脇※工事車両の妨げにならないよう注意","abs":"約30m (ゴルジュ内の大滝)","rope":"40m × 2本 ＋ 予備（緊急用）","rig":"解除可能システム必須。水流を避けたライン取り。","anc":"強固な岩盤や樹木","act":"連続するゴルジュの突破、テクニカルな懸垂下降（最大約30m）","esc":"ほぼ無し。一度ゴルジュに入ると脱出は極めて困難。","geo":"堆積岩・変成岩。非常に大きく滑らかな岩盤。","wq":"非常に良好だが、谷が深く日照時間が短いため、水温は低めに推移","risk":"サイフォン、アンダーカット、強力なボイル。増水時は厳禁。","rain":"60.1 mm","hosp":"吉野町立吉野病院","htel":"0746-32-3001","pol":"吉野警察署 下北山駐在所","ptel":"0746-85-2010","heli":"下北山スポーツ公園グラウンド","conv":"デイリーヤマザキ 下北山店","toilet":"下北山スポーツ公園内、または池郷ダム周辺","gas":"昭和シェル 下北山SS","onsen":"下北山温泉「きなりの湯」","sig":"完全圏外。林道をダム付近まで戻るか、R169まで戻る必要あり。","sl":0},{"no":8,"name":"池郷川","en":"lower-ikegou-gawa","pref":"","area":"","stars":"★★★★☆","sc":4,"rock":"mix","v":"—","d":"—","ca":"約 24.9 km2 (上流同様、下流も水量の圧力は強大)","time":"遡行：4〜5h / 下山：30分","map":"https://www.google.com/maps?q=34.0980,135.9280","gsi":"https://maps.gsi.go.jp/#16/34.0980/135.9280/","park":"下流部の入渓点付近の路肩に駐車可能なスペースあり","abs":"約 10m〜15m。※「飛び込み（ジャンプ）」や「長いスイム」がメイン","rope":"30m〜40m程度のフローティングロープ1本","rig":"解除可能システム必須。水流を避けたライン取り。","anc":"樹木や岩角。","act":"ロングスイム（100m級の淵）、ジャンプ、短いスライダー","esc":"右岸側の林道へ這い上がれるポイントが点在する。","geo":"堆積岩（四万十帯）および変成岩。","wq":"非常にクリアなエメラルドグリーンの水質","risk":"長いスイム中の低体温症、強い対流。","rain":"64.2 mm","hosp":"吉野町立吉野病院","htel":"0746-32-3001","pol":"吉野警察署 下北山駐在所","ptel":"0746-85-2010","heli":"下北山スポーツ公園グラウンド","conv":"デイリーヤマザキ 下北山店","toilet":"下北山スポーツ公園内、または池郷ダム周辺","gas":"昭和シェル 下北山SS","onsen":"下北山温泉「きなりの湯」","sig":"完全圏外。林道をダム付近まで戻るか、R169まで戻る必要あり。","sl":0},{"no":9,"name":"内鹿野沢","en":"uchikano-sawa","pref":"","area":"","stars":"★★★★★","sc":5,"rock":"sedimentary","v":"—","d":"—","ca":"約 5.5 km2 (小〜中規模で安定しやすい)","time":"遡行：4〜5h / 下山：1.5h（遊歩道利用）","map":"https://www.google.com/maps?q=33.7225,135.5940","gsi":"https://maps.gsi.go.jp/#16/33.7225/135.5940/","park":"福定の大銀杏付近、または内鹿野橋周辺の路肩","abs":"約20m (出合いの滝や斜瀑の下降時)","rope":"30m〜40m×1本 ＋ 予備(緊急用)","rig":"フリクションが命。支点は樹木がメイン。","anc":"樹木、岩角。ナメ床のため中間支点が取りにくい。","act":"エンドレスなナメ歩き、小滝のスライダー、釜へのスイム。","esc":"左岸側に遊歩道が並走しており、脱出は極めて容易。","geo":"砂岩・泥岩（田辺層群）。非常に滑らかで広大なナメ。","wq":"良好。日当たりが良いため、夏場は水温が高め。","risk":"増水時はナメの流速が非常に速くなり、足元を掬われやすい。","rain":"70.5 mm","hosp":"紀南病院※田辺市中心部","htel":"0739-22-5050","pol":"田辺警察署","ptel":"0739-23-0110","heli":"—","conv":"ファミリーマート 田辺中辺路町店（R311沿い）","toilet":"入渓点手前の駐車場、または近露周辺の公衆トイレ。","gas":"中辺路町内の各GS（R311沿い）","onsen":"奥熊野温泉 アイリスパーク（近露） または 湯の峰温泉","sig":"入渓点付近はdocomo/au良好。谷の中は一部圏外。","sl":2},{"no":10,"name":"鳴谷","en":"naki-tani","pref":"","area":"","stars":"★★★★★","sc":5,"rock":"sedimentary","v":"—","d":"—","ca":"約 8.5 km2 (中規模だが、V字谷のため水位上昇が速い)","time":"遡行：5〜7h / 下山：1.5h（林道・仕事道）","map":"https://www.google.com/maps?q=33.8055,135.8540","gsi":"https://maps.gsi.go.jp/#16/33.8055/135.8540/","park":"宝竜滝展望台付近、または林道脇の広いスペース","abs":"約50m〜60m (宝竜滝を分割下降する場合)","rope":"60m×2本 ＋ 予備(緊急用)","rig":"マルチピッチ懸垂・空中懸垂対応。リレサブル必須。","anc":"強固な岩盤へのボルト、樹木。既存残置は要確認。","act":"巨大な滝の懸垂下降、ゴルジュ内の突破。","esc":"核心部に入ると左右が切り立ち、脱出は極めて困難。","geo":"堆積岩（四万十帯）。非常に硬く、磨かれた岩盤。","wq":"非常に良好 / 谷が深く日照が少ないため水温は低め","risk":"宝竜滝（2段105m）付近の強大な風圧と水圧に注意。","rain":"58.4 mm","hosp":"新宮市立医療センター","htel":"0735-22-6411","pol":"新宮警察署 熊野川駐在所","ptel":"0735-44-0004","heli":"—","conv":"ローソン 紀宝町鵜殿店 または 本宮町内の商店","toilet":"宝竜滝展望台付近（※閉鎖・荒廃の可能性あり、事前確認）","gas":"熊野川町内のGS（R168沿い・日祝休に注意）","onsen":"湯の峰温泉 つぼ湯 または 川湯温泉","sig":"完全圏外。国道168号線まで戻る必要あり。","sl":0},{"no":11,"name":"熊野川","en":"kitamata-dani","pref":"","area":"","stars":"★★★★☆","sc":4,"rock":"sedimentary","v":"—","d":"—","ca":"約 6.5 km2 (中規模だが急峻なV字谷)","time":"遡行：5〜6h / 下山：1.5h","map":"https://www.google.com/maps?q=33.8440,135.8850","gsi":"https://maps.gsi.go.jp/#16/33.8440/135.8850/","park":"林道脇の広めのスペース（転回場所に注意・工事車両優先）","abs":"約30m (核心部の連瀑帯をどう繋ぐかが鍵)","rope":"40m×2本 ＋ 予備(緊急用)","rig":"連続する懸垂下降におけるロープ管理と解除可能システム。","anc":"樹木、岩盤。残置は古いものが多いため、必ずバックアップを。","act":"テクニカルな懸垂下降、短いスイム、小滝の登攀。","esc":"尾根へ逃げるルートはあるが地形が複雑。読図力が必須。","geo":"堆積岩（四万十帯）。苔や落ち葉が多く、滑りやすい。","wq":"非常に良好 / 谷が深く日照が少ないため、水温は低め","risk":"増水時のゴルジュ内の脱出難易度、滝直下の水流トラップに注意。","rain":"62.6 mm","hosp":"新宮市立医療センター","htel":"0735-22-6411","pol":"新宮警察署 熊野川駐在所","ptel":"0735-44-0004","heli":"—","conv":"ローソン 紀宝町鵜殿店 または 本宮町内の商店","toilet":"道の駅「瀞峡街道 熊野川」などを利用。","gas":"熊野川町内のGS（R168沿い・日祝休に注意）","onsen":"湯の峰温泉 つぼ湯（日本最古の公衆浴場）","sig":"完全圏外。国道168号線まで戻る必要あり。","sl":0},{"no":12,"name":"立間戸谷","en":"tachimado-dani","pref":"","area":"","stars":"★★★★★","sc":5,"rock":"sedimentary","v":"—","d":"—","ca":"約 7.2 km2 (中規模だが、大台ヶ原の雨の影響を直に受ける)","time":"遡行：4〜6h / 下山：1.5h（仕事道利用）","map":"https://www.google.com/maps?q=34.2540,136.2150","gsi":"https://maps.gsi.go.jp/#16/34.2540/136.2150/","park":"立間戸谷入口付近の路肩（数台分・転回注意）","abs":"約25m〜30m (嘉例倉の滝をどう繋ぐか)","rope":"40m×2本 ＋ 予備(緊急用)","rig":"リレサブル必須。 滝の落ち口が鋭いため、ロープ保護（プロテクター）推奨。","anc":"強固な岩盤へのボルト、樹木、流木。","act":"連続する滝の懸垂、深い釜でのスイム、美しいナメ歩き。","esc":"左岸側に並走する仕事道へ逃げられるポイントあり。","geo":"堆積岩。非常に硬く、磨かれた美しい岩盤。","wq":"極めて良好 / 夏場は適温だが、雨後は急冷する","risk":"嘉例倉の滝（三段）の複雑な水流トラップに注意。","rain":"41.2 mm","hosp":"松阪中央総合病院","htel":"0598-21-5252","pol":"大台警察署","ptel":"0598-82-0110","heli":"—","conv":"ファミリーマート 三重インター店","toilet":"道の駅「奥伊勢おおだい」または フォレストピア。","gas":"大台町中心部のGS。","onsen":"奥伊勢フォレストピア 宮川山荘","sig":"ほぼ圏外。林道入口付近まで戻ると回復。","sl":1},{"no":13,"name":"黒瀬谷","en":"kurose-dani","pref":"","area":"","stars":"★★★★☆","sc":4,"rock":"sedimentary","v":"—","d":"—","ca":"約 3.2km2 (数値は小さいが、岩盤が多く反応が早い)","time":"遡行：3〜4h / 下山：30〜45分（林道利用）","map":"https://www.google.com/maps?q=34.2380,136.1620","gsi":"https://maps.gsi.go.jp/#16/34.2380/136.1620/","park":"黒瀬付近の林道余地（通行の妨げにならないよう注意）","abs":"約20m〜25m (核心部の二段の滝)","rope":"40m×2本 ＋ 予備(緊急用)","rig":"リレサブル必須。 滝の落ち口でのロープの擦れ（エッジ）対策。","anc":"樹木、岩盤へのボルト、強固な岩角。","act":"連続する懸垂下降、深い釜へのスイム、ジャンプ可。","esc":"林道が比較的近いため、右岸側へ逃げられる箇所が多い。","geo":"堆積岩（四万十帯）。非常に硬く、磨かれた岩盤。","wq":"極めて良好 / 大杉谷特有のクリアな水質","risk":"連瀑帯での水圧によるスタック、浮き石に注意。","rain":"41.2 mm","hosp":"松阪中央総合病院","htel":"0598-21-5252","pol":"大台警察署","ptel":"0598-82-0110","heli":"—","conv":"ファミリーマート 三重インター店","toilet":"道の駅「奥伊勢おおだい」または 大杉谷周辺施設。","gas":"大台町中心部のGS。","onsen":"奥伊勢フォレストピア 宮川山荘","sig":"ほぼ圏外。林道入口付近まで戻ると回復。","sl":1},{"no":14,"name":"立合川","en":"tachiaigou","pref":"","area":"","stars":"★★★★★","sc":5,"rock":"sedimentary","v":"—","d":"—","ca":"約 28.0 km2 (池郷川に匹敵する広さ。増水時は極めて危険)","time":"遡行：5〜7h / 下山：2h（林道・作業道）","map":"https://www.google.com/maps?q=34.1955,136.1950","gsi":"https://maps.gsi.go.jp/#16/34.1955/136.1950/","park":"立合橋付近、または林道終点付近の余地","abs":"約15m〜20m (本流の段差や巨岩の下降)","rope":"40m×2本 ＋ フローティングロープ（救助・渡渉用）","rig":"リレサブル必須。 激流を避けたライン取りが核心。","anc":"巨大な流木、巨岩への巻き付け、一部ボルト。","act":"ロングスイム、激流の突破、ダイナミックな巨岩越え。","esc":"右岸側に古い林道が走っているが、崩落箇所が多い。","geo":"堆積岩。巨岩が多く、水流による磨耗が激しい。","wq":"極めて良好 / 水量が多いため夏場でも安定している","risk":"強力な渡渉（ウェーディング）リスク。サイフォン現象に厳重注意。","rain":"41.2 mm","hosp":"松阪中央総合病院","htel":"0598-21-5252","pol":"大台警察署","ptel":"0598-82-0110","heli":"—","conv":"ファミリーマート 三重インター店","toilet":"道の駅「奥伊勢おおだい」または フォレストピア。","gas":"大台町中心部のGS。","onsen":"奥伊勢フォレストピア 宮川山荘","sig":"完全圏外。林道をかなり戻るまで不通。","sl":0},{"no":15,"name":"古川","en":"hurukawaiwaya-dani","pref":"","area":"","stars":"★★★★☆","sc":4,"rock":"sedimentary","v":"—","d":"—","ca":"約 5.8 km2 (中規模だが、狭いゴルジュ内の増水は致命的)","time":"遡行：5〜7h / 下山：1.5h（林道・作業道）","map":"https://www.google.com/maps?q=34.2250,136.1050","gsi":"https://maps.gsi.go.jp/#16/34.2250/136.1050/","park":"古川林道終点付近の路肩（転回・落石に注意）","abs":"約30m〜35m (不動滝の下降時)","rope":"40m×2本 ＋ 予備(緊急用)","rig":"マルチピッチ、解除可能システム。 暗所での作業能力。","anc":"樹木、岩盤へのボルト、流木。支点の風化に注意。","act":"深いゴルジュの突破、高度感のある懸垂、スイム。","esc":"困難。 ゴルジュ内は壁が切り立ち、脱出ポイントは限定的。","geo":"堆積岩。ゴルジュ内は非常に暗く、湿った苔に注意。","wq":"良好 / 日照が極めて少ないため、真夏でも冷え込む","risk":"不動滝（約30m）付近の複雑な気流と水飛沫に注意。","rain":"36.3 mm","hosp":"松阪中央総合病院","htel":"0598-21-5252","pol":"大台警察署","ptel":"0598-82-0110","heli":"—","conv":"ファミリーマート 三重インター店","toilet":"道の駅「奥伊勢おおだい」または フォレストピア。","gas":"大台町中心部のGS。","onsen":"奥伊勢フォレストピア 宮川山荘","sig":"完全圏外。林道をかなり戻るまで不通。","sl":0},{"no":16,"name":"四ノ川","en":"shinogou","pref":"","area":"","stars":"★★★★☆","sc":4,"rock":"sedimentary","v":"—","d":"—","ca":"約 12.5 km2 (雨後の増水に要注意)","time":"遡行：3.5〜4.5h / 下山：1h","map":"https://www.google.com/maps?q=34.0044,135.8077&authuser=1","gsi":"https://maps.gsi.go.jp/#16/34.0044/135.8077/","park":"21世紀の森 公園駐車場または周辺路肩","abs":"約15〜20m","rope":"30m〜40m×2本、または40m×1本＋予備","rig":"**解除可能システム（Releasable）**を強く推奨","anc":"立ち木、一部残置ハーケン（要補強・バックアップ）","act":"釜へのジャンプ（5〜8m可）、天然スライダー多数","esc":"中間二又付近から右岸の仕事道へ脱出可能","geo":"堆積岩（四万十帯）。非常に滑りやすくラバーソール推奨。","wq":"最高クラスの透明度 / 水温低め（5mmウェット推奨）","risk":"核心部大滝下のボイル、中盤のアンダーカット岩に注意","rain":"60.2 mm","hosp":"十津川村立診療所","htel":"0746-62-0139","pol":"十津川警察署","ptel":"0746-62-0110","heli":"—","conv":"ファミリーマート 近鉄五條駅前店（以降1.5hなし）","toilet":"21世紀の森・紀伊半島森林植物公園内","gas":"ENEOS 十津川SS（上野地付近）※早朝夜間営業注意","onsen":"十津川温泉 庵の湯（源泉かけ流し）","sig":"谷底圏外。道路沿い・尾根上でdocomo/au微弱","sl":1}];
+let af='all';
+function rb(r){return r==='granite'?'<span class="badge bg_">花崗岩</span>':r==='sedimentary'?'<span class="badge bs">堆積岩</span>':'<span class="badge bm">混合岩</span>';}
+function sb(l){let b='';for(let i=0;i<3;i++)b+='<div class="sigb'+(i<l?' on':'')+'" style="height:'+(6+i*4)+'px"></div>';return'<div class="sigbars">'+b+'</div>';}
+function setFilter(f,el){af=f;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderList();}
+function renderList(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const fl=C.filter(c=>{
+    const ms=!q||c.name.includes(q)||String(c.en).toLowerCase().includes(q)||String(c.area).includes(q)||String(c.pref).includes(q);
+    const mf=af==='all'||String(c.pref).includes(af)||c.rock===af||(af==='5'&&c.sc>=5);
+    return ms&&mf;
+  });
+  const lv=document.getElementById('listView');
+  if(!fl.length){lv.innerHTML='<div class="no-results">該当する渓谷がありません</div>';return;}
+  lv.innerHTML=fl.map(c=>'<div class="canyon-card" onclick="showDetail('+c.no+')"><div class="card-main"><div class="canyon-num">'+c.no+'</div><div class="card-info"><div class="card-name">'+c.name+'</div><div class="card-en">'+c.en+'</div><div class="card-meta"><span class="badge bp">'+c.pref+'</span>'+rb(c.rock)+'<span class="bstars">'+c.stars+'</span></div></div><div class="card-arrow">›</div></div></div>').join('');
+}
+function showDetail(no){
+  const c=C.find(x=>Number(x.no)===Number(no));
+  if(!c)return;
+  const st=c.sl===0?'完全圏外':c.sl===1?'微弱（道路付近）':'良好（一部圏外）';
+  const rn=String(c.rock)==='granite'?'花崗岩':String(c.rock)==='sedimentary'?'堆積岩':'混合岩';
+  document.getElementById('appList').style.display='none';
+  const dv=document.getElementById('appDetail');
+  dv.style.display='block';
+  dv.innerHTML='<div class="detail-header"><button class="back-btn" onclick="backToList()">‹ 一覧に戻る</button><div class="dname">'+c.name+'</div><div class="den">'+c.en+'</div><div class="dstars">'+c.stars+'</div><div class="dbadges"><span class="dbadge">'+c.pref+' '+c.area+'</span><span class="dbadge">'+rn+'</span></div></div>'
+  +'<div class="section"><div class="stitle">基本情報</div><div class="info-grid"><div class="iitem"><div class="ilabel">標高差</div><div class="ival">'+c.v+'</div></div><div class="iitem"><div class="ilabel">水平距離</div><div class="ival">'+c.d+'</div></div><div class="iitem"><div class="ilabel">集水面積</div><div class="ival">'+c.ca+'</div></div><div class="rain-highlight"><div class="rain-label">3日間降水量</div><div class="rain-val">'+c.rain+'</div></div></div><div class="irow"><span class="irl">所要時間</span><span class="irv">'+c.time+'</span></div><div class="irow"><span class="irl">駐車場</span><span class="irv">'+c.park+'</span></div></div>'
+  +'<div class="section"><div class="stitle">テクニカル</div><div class="irow"><span class="irl">最大懸垂</span><span class="irv">'+c.abs+'</span></div><div class="irow"><span class="irl">推奨ロープ</span><span class="irv">'+c.rope+'</span></div><div class="irow"><span class="irl">リギング</span><span class="irv">'+c.rig+'</span></div><div class="irow"><span class="irl">支点形式</span><span class="irv">'+c.anc+'</span></div><div class="irow"><span class="irl">アクション</span><span class="irv">'+c.act+'</span></div><div class="irow"><span class="irl">エスケープ</span><span class="irv">'+c.esc+'</span></div></div>'
+  +'<div class="section"><div class="stitle">水文・環境</div><div class="irow"><span class="irl">地質</span><span class="irv">'+c.geo+'</span></div><div class="irow"><span class="irl">水質・水温</span><span class="irv">'+c.wq+'</span></div><div class="alert-box"><div style="font-size:14px;flex-shrink:0">⚠️</div><div class="alert-text">'+c.risk+'</div></div></div>'
+  +(c.map?'<div class="section"><div class="stitle">地図を開く</div><a class="map-btn" href="'+c.map+'" target="_blank">📍 GoogleMap で開く</a><a class="map-btn map-btn2" href="'+c.gsi+'" target="_blank">🗾 地理院地図で開く</a></div>':'')
+  +'<div class="section"><div class="stitle">安全・インフラ</div>'
+  +'<div class="emr-item"><span class="emrl">救急病院</span><div class="emrr"><div class="emrname">'+c.hosp+'</div>'+(c.htel?'<a href="tel:'+c.htel+'" class="emrtel">📞 '+c.htel+'</a>':'')+'</div></div>'
+  +'<div class="emr-item"><span class="emrl">警察</span><div class="emrr"><div class="emrname">'+c.pol+'</div>'+(c.ptel?'<a href="tel:'+c.ptel+'" class="emrtel">📞 '+c.ptel+'</a>':'')+'</div></div>'
+  +(c.heli&&c.heli!=='—'?'<div class="emr-item"><span class="emrl">ヘリ着陸点</span><div class="emrr"><div class="emrname">'+c.heli+'</div></div></div>':'')
+  +'<div class="emr-item"><span class="emrl">最終コンビニ</span><div class="emrr"><div class="emrname">'+c.conv+'</div></div></div>'
+  +'<div class="emr-item"><span class="emrl">トイレ</span><div class="emrr"><div class="emrname">'+c.toilet+'</div></div></div>'
+  +'<div class="emr-item"><span class="emrl">ガソリン</span><div class="emrr"><div class="emrname">'+c.gas+'</div></div></div>'
+  +'<div class="emr-item"><span class="emrl">下山後の温泉</span><div class="emrr"><div class="emrname">'+c.onsen+'</div></div></div>'
+  +'<div class="emr-item"><span class="emrl">電波状況</span><div class="emrr"><div class="sigwrap">'+sb(c.sl)+'<span style="font-size:12px">'+st+'</span></div></div></div>'
+  +'</div><div class="detail-bottom"></div>';
+  dv.scrollTop=0;window.scrollTo(0,0);
+}
+function backToList(){document.getElementById('appDetail').style.display='none';document.getElementById('appList').style.display='block';}
+renderList();
+</script>
+</body>
+</html>
