@@ -86,7 +86,7 @@ a{color:inherit;text-decoration:none}
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 11L7 3L12 11" stroke="#9fc9b0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 8L7 4.5L9.5 8" stroke="#e8f5ee" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <h1>紀伊半島 渓谷トポ</h1>
-      <span class="header-sub">ICA 2026<br><span style="font-size:10px;color:#5a9a70">更新: 2026/04/02 12:31</span></span>
+      <span class="header-sub">ICA 2026<br><span style="font-size:10px;color:#5a9a70">更新: 2026/04/02 12:36</span></span>
     </div>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
@@ -98,7 +98,8 @@ a{color:inherit;text-decoration:none}
       <button class="chip" onclick="setFilter('三重',this)">三重県</button>
       <button class="chip" onclick="setFilter('和歌山',this)">和歌山県</button>
       <button class="chip" onclick="setFilter('granite',this)">花崗岩</button>
-      <button class="chip" onclick="setFilter('5',this)">★5のみ</button>
+      <button class="chip" onclick="setFilter('sedimentary',this)">堆積岩</button>
+      <button class="chip" onclick="setFilter('mix',this)">混合岩</button>
     </div>
   </div>
   <div class="list-view" id="listView"></div>
@@ -114,7 +115,7 @@ function renderList(){
   const q=(document.getElementById('searchInput').value||'').toLowerCase();
   const fl=C.filter(c=>{
     const ms=!q||c.name.includes(q)||String(c.en).toLowerCase().includes(q)||String(c.area).includes(q)||String(c.pref).includes(q);
-    const mf=af==='all'||String(c.pref).includes(af)||c.rock===af||(af==='5'&&c.sc>=5);
+    const mf=af==='all'||String(c.pref).includes(af)||c.rock===af;
     return ms&&mf;
   });
   const lv=document.getElementById('listView');
